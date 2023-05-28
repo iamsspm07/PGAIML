@@ -1,0 +1,77 @@
+## 1. Handle Category Data. 
+## 2. Increase or Manual Hyper-parameter-tuining.
+
+Step_No_1: Import Required Library
+     import numpy as np
+     import pandas as pd
+     import matplotlib.pyplot as plt
+     from sklearn.model_selection import train_test_split
+     import seaborn as sns
+     from sklearn.preprocessing import StandardScaler
+     from sklearn.linear_model import SGDClassifier
+     from sklearn.metrics import accuracy_score
+     import warnings
+     warnings.filterwarnings("ignore")
+
+Step_No_2: Import Dataset
+     Link = "//dataset_url//"
+     dataset = pd.read_csv(Link)
+
+Step_No_3: Display Head
+     dataset.head()
+
+Step_No_4: Check Missing Value or Missing Value Handling
+     dataset.isna().sum() // Missing Value sum
+     dataset = dataset.dropna()  OR dataset.dropna(inplace = True) // Drop all null Value
+
+Step_No_5: Chack data-type to handle the Category data
+     dataset.dtypes // display the data-type for each column
+     dataset['column_name'].unique() // display the unique Value contains in that selected column
+
+Step_No_6: Replacing the Category data to numeric data
+     dataset['column_name'] = dataset['column_name'].replace(['No.of categories values in a rows'],[No.of numeric values need to replace with categories value in rows])
+     dataset.head()
+
+Step_No_7: In "Step_No_6", we used ".replace" method wich is difficult for large date in column so, best practices to use
+          Label-Encoder which is pre library in sk-learn.
+      "from sklearn.preprocessing import LabelEncoder" // Importing Library
+      le = LabelEncoder() // Creating Object for Label-Encoder
+      dataset['column_name'] = le.fit_transform(dataset['column_name'])  // Category to numeric transforming
+
+Step_No_8: Split data in to dependent and independent variable
+     X = dataset[['Put all the independent variable or columns']] // independent column
+     Y = dataset['Put dependent variable or column'] // dependent column
+
+Step_No_9: Train and Test Split
+     x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=0.2,random_state = 41) // spliting data into train and test spliting
+
+Step_No_10_A: Checking Accuracy score for the model "Default-Hyper-tuining" and "Manual-Hyper-tuining"
+     ## "Default-Hyper-tuining"
+     lc = SGDClassifier() // Object Creating
+     lc.fit(x_train,y_train) // Fitting the train data to SGDClassifier
+     y_pred = lc.predict(x_test)
+     print(' Accuracy ',lc.score(x_test,y_test)) // Print Accuracy Score for default-Hyper-tuining
+     print(lc.get_params().items()) // Display or Get all parameters of SGDClassifier
+
+Step_No_11: Manual Accuracy Score Testing and Checking for that needed library Import
+     "from sklearn.model_selection import GridSearchCV" // Import Library
+     print(lc.get_params().items()) // Display or Get all parameters of SGDClassifier // Print all parameters
+     params = {
+    "loss":['hinge', 'log_loss', 'log', 'modified_huber', 'squared_hinge', 'perceptron', 'squared_error', 'huber', 'epsilon_insensitive'],
+    "max_iter":[1000,2000,2500,3000]
+     }
+
+     clf = SGDClassifier() // Object Creating for SGDClassifier
+     grid = GridSearchCV(clf,param_grid=params,cv=10) // Object Creating for GridSearchCV and pass the required parameter for accuracy_score Check
+     grid.fit(x_train,y_train) // Fitting the train data to GridSearchCV
+     print(grid.best_params_)
+     print(grid.best_estimator_)
+     print(grid.best_score_)
+
+Step_No_10_B: Checking Accuracy score for the model "Default-Hyper-tuining" and "Manual-Hyper-tuining"
+     ## "Manual-Hyper-tuining"
+     lc = SGDClassifier(loss= 'log', max_iter=2000) // Object Creating and pass the parameters from "Step_No_11"
+     lc.fit(x_train,y_train) // Fitting the train data to SGDClassifier
+     y_pred = lc.predict(x_test)
+     print(' Accuracy ',lc.score(x_test,y_test)) // Print Accuracy Score for default-Hyper-tuining
+     print(lc.get_params().items()) // Display or Get all parameters of SGDClassifier  // Optional
